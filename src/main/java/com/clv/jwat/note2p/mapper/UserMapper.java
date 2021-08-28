@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
-    AppUser findByEmail(String email, @Param("active") boolean isActive);
+    AppUser findByEmailAndStatus(String email, @Param("active") boolean isActive);
+    AppUser findByEmail(String email);
     AppUser findById(Long id, @Param("active") boolean isActive);
+    void save(AppUser appUser);
 }

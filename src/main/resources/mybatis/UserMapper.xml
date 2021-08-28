@@ -12,10 +12,16 @@
         <result property="active" column="IS_ACTIVE"/>
     </resultMap>
 
-    <select id="findByEmail" resultMap="UserMapper">
+    <select id="findByEmailAndStatus" resultMap="UserMapper">
         SELECT ID, FULLNAME, EMAIL, PASSWORD, IS_ACTIVE
         FROM USERS
         WHERE EMAIL = #{email} AND IS_ACTIVE = #{active}
+    </select>
+
+    <select id="findByEmail" resultMap="UserMapper">
+        SELECT ID, FULLNAME, EMAIL, PASSWORD, IS_ACTIVE
+        FROM USERS
+        WHERE EMAIL = #{email}
     </select>
 
     <select id="findById" resultMap="UserMapper">
@@ -23,4 +29,12 @@
         FROM USERS
         WHERE ID = #{id} AND IS_ACTIVE = #{active}
     </select>
+
+    <insert id="save" parameterType="AppUser">
+        INSERT INTO users (email, password, fullname, is_active, created_at)
+        VALUES (#{email}, #{password}, #{fullname}, #{isActive}, #{createdAt});
+        <selectKey resultType="Long" keyProperty="id" order="AFTER">
+            SELECT LASTVAL() AS ID
+        </selectKey>
+    </insert>
 </mapper>
