@@ -19,7 +19,8 @@ public class JWTProvider {
 
     public static String getAccessToken(AppUser appUser) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, 10);
+        calendar.add(Calendar.HOUR, 24 * 3);
+//        calendar.add(Calendar.SECOND, 10);
         return JWT.create()
                 .withSubject(appUser.getId().toString())
                 .withExpiresAt(calendar.getTime())
@@ -30,7 +31,7 @@ public class JWTProvider {
 
     public static String getRefreshToken(AppUser appUser) {
         Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.SECOND, 10);
+//        calendar.add(Calendar.SECOND, 20);
         calendar.add(Calendar.HOUR, 24 * 7);
         return JWT.create()
                 .withSubject(appUser.getId().toString())

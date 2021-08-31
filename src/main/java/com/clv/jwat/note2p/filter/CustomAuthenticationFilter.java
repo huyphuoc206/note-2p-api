@@ -21,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Cookie cookie = new Cookie("refresh_token", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/api/token/refresh");
+        cookie.setMaxAge(Calendar.HOUR * 24 * 7);
         response.addCookie(cookie);
         new ObjectMapper().writeValue(response.getOutputStream(), map);
     }
