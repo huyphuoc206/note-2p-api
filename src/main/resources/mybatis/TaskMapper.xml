@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clv.jwat.note2p.mapper.TaskMapper">
+    <resultMap id="TaskMapper" type="Task">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="deleted" column="IS_DELETED"/>
+        <result property="done" column="IS_DONE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="categoryId" column="CATEGORY_ID"/>
+    </resultMap>
+
+    <select id="findById" resultMap="TaskMapper">
+        SELECT *
+        FROM TASKS
+        WHERE ID = #{id}
+    </select>
+
+    <update id="update" parameterType="Task">
+        UPDATE TASKS
+        SET NAME = #{name}, IS_DONE = #{isDone}, IS_DELETED = #{isDeleted}, UPDATED_AT = #{updatedAt}, CATEGORY_ID = #{categoryId}
+        WHERE ID = #{id}
+    </update>
+
+    <insert id="save" parameterType="Task">
+        INSERT INTO TASKS (name, is_done, is_deleted, created_at, category_id)
+        VALUES (#{name}, #{isDone}, #{isDeleted}, #{createdAt}, #{categoryId});
+        <selectKey resultType="Long" keyProperty="id" order="AFTER">
+            SELECT LASTVAL()
+        </selectKey>
+    </insert>
+</mapper>

@@ -14,6 +14,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 
@@ -44,11 +45,12 @@ public class UserAPI {
                 log.info("User {} renew token success", appUser.getEmail());
                 return ResponseEntity.ok(map);
             } catch (Exception exception) {
-                log.error("Error request: {}", exception.getMessage());
+                log.error("Error refresh token: {}", exception.getMessage());
                 ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), HttpStatus.FORBIDDEN.value());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
             }
         } else {
+            log.error("Refresh token is missing");
             ErrorResponse errorResponse = new ErrorResponse("Refresh token is missing", HttpStatus.BAD_REQUEST.value());
             return ResponseEntity.badRequest().body(errorResponse);
         }
@@ -70,8 +72,19 @@ public class UserAPI {
             Cookie cookie = new Cookie("refresh_token", refreshToken);
             cookie.setHttpOnly(true);
             cookie.setPath("/api/token/refresh");
+            cookie.setMaxAge(Calendar.HOUR * 24 * 7);
             response.addCookie(cookie);
             return ResponseEntity.ok(map);
         }
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Object> logOut(HttpServletResponse response) {
+        log.info("User logout");
+        Cookie cookie = new Cookie("refresh_token", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/api/token/refresh");
+        response.addCookie(cookie);
+        return ResponseEntity.ok().build();
     }
 }
