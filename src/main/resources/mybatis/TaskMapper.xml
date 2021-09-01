@@ -19,6 +19,12 @@
         WHERE ID = #{id}
     </select>
 
+    <select id="findByCategoryId" resultMap="TaskMapper">
+        SELECT *
+        FROM TASKS
+        WHERE CATEGORY_ID = #{id} AND IS_DELETED = FALSE
+    </select>
+
     <update id="update" parameterType="Task">
         UPDATE TASKS
         SET NAME = #{name}, IS_DONE = #{isDone}, IS_DELETED = #{isDeleted}, UPDATED_AT = #{updatedAt}, CATEGORY_ID = #{categoryId}
