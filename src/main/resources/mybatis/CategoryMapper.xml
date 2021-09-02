@@ -6,7 +6,7 @@
     <resultMap id="CategoryMapper" type="Category">
         <result property="id" column="ID"/>
         <result property="title" column="TITLE"/>
-        <result property="isDeleted" column="IS_DELETED"/>
+        <result property="deleted" column="IS_DELETED"/>
         <result property="createdAt" column="CREATED_AT"/>
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="userId" column="USER_ID"/>
@@ -28,7 +28,9 @@
                      AND T.IS_DELETED = FALSE
                  GROUP BY C.ID
              ) A ON C.ID = A.ID
-        WHERE C.USER_ID = #{userId}
+        WHERE C.USER_ID = #{userId} AND C.IS_DELETED = false
+        ORDER BY C.CREATED_AT DESC
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="findById" resultMap="CategoryMapper">
@@ -68,4 +70,9 @@
         </selectKey>
     </insert>
 
+    <select id="count" resultType="long">
+        SELECT COUNT(C.id)
+        FROM CATEGORY C
+        WHERE C.USER_ID = #{userId} AND C.IS_DELETED = false
+    </select>
 </mapper>

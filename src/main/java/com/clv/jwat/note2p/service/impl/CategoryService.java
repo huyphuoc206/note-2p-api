@@ -17,17 +17,12 @@ import java.util.List;
 public class CategoryService implements ICategoryService {
 
     private final CategoryMapper categoryMapper;
-
     private final TaskMapper taskMapper;
 
-
     @Override
-    public List<Category> getCategories(Long userId) {
-        List<Category> results = categoryMapper.getCategories(userId);
-        if (results == null) {
-            return null;
-        }
-        return results;
+    public List<Category> getCategories(Long userId, int page, int limit) {
+        int offset = (page - 1) * limit;
+        return categoryMapper.getCategories(userId, offset, limit);
     }
 
     @Transactional
@@ -70,12 +65,9 @@ public class CategoryService implements ICategoryService {
         category.setId(categoryID);
         category.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         int result = categoryMapper.update(category);
-        if(result <= 0)
-        {
+        if (result <= 0) {
             return null;
-        }
-        else
-        {
+        } else {
             return categoryMapper.findById(categoryID);
         }
     }
@@ -83,13 +75,17 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category getCategory(Long id) {
         Category result = categoryMapper.findById(id);
-        if( result == null)
-        {
+        if (result == null) {
             return null;
         }
         List<Task> tasks = taskMapper.findByCategoryId(id);
         result.setTasks(tasks);
 
         return result;
+    }
+
+    @Override
+    public long count(Long userId) {
+        return categoryMapper.count(userId);
     }
 }
