@@ -31,7 +31,7 @@ public class JWTProvider {
 
     public static String getRefreshToken(AppUser appUser) {
         Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.SECOND, 20);
+//        calendar.add(Calendar.SECOND, 22);
         calendar.add(Calendar.HOUR, 24 * 7);
         return JWT.create()
                 .withSubject(appUser.getId().toString())
