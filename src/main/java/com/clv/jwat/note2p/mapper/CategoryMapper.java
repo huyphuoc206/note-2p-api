@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface CategoryMapper {
 
-    List<Category> getCategories(Long userId, int offset, int limit);
+    List<Category> getCategories(Long userId, int offset, int limit, String state, String keyWord);
 
     void insert(Category category);
 
@@ -18,5 +18,5 @@ public interface CategoryMapper {
 
     Category findById(Long id);
 
-    long count(Long userId);
+    long count(Long userId, String state, String keyWord);
 }

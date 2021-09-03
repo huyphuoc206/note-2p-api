@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +21,15 @@ public class CategoryService implements ICategoryService {
     private final TaskMapper taskMapper;
 
     @Override
-    public List<Category> getCategories(Long userId, int page, int limit) {
+    public List<Category> getCategories(Long userId, int page, int limit, String state, String keyWord) {
+        if (keyWord != null) {
+            keyWord = keyWord.trim().toLowerCase();
+            if (keyWord.trim().length() == 0)
+                keyWord = null;
+        }
+        state = state.toUpperCase();
         int offset = (page - 1) * limit;
-        return categoryMapper.getCategories(userId, offset, limit);
+        return categoryMapper.getCategories(userId, offset, limit, state, keyWord);
     }
 
     @Transactional
@@ -30,6 +37,7 @@ public class CategoryService implements ICategoryService {
     public Category insert(Category category) {
         category.setDeleted(false);
         category.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        category.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         category.setUserId(category.getUserId());
         categoryMapper.insert(category);
         if (category.getId() == null) {
@@ -38,6 +46,7 @@ public class CategoryService implements ICategoryService {
         List<Task> tasks = category.getTasks();
         for (Task items : tasks) {
             items.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            items.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             items.setDeleted(false);
             items.setCategoryId(category.getId());
             items.setDone(false);
@@ -85,7 +94,13 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public long count(Long userId) {
-        return categoryMapper.count(userId);
+    public long count(Long userId, String state, String keyWord) {
+        if (keyWord != null) {
+            keyWord = keyWord.trim().toLowerCase();
+            if (keyWord.trim().length() == 0)
+                keyWord = null;
+        }
+        state = state.toUpperCase();
+        return categoryMapper.count(userId, state, keyWord);
     }
 }

@@ -14,6 +14,32 @@
         <result property="allTasks" column="ALL"/>
     </resultMap>
 
+    <select id="count" resultType="long">
+        SELECT COUNT(C.id)
+        FROM CATEGORY C JOIN
+            (
+            SELECT C.ID, COUNT(T.ID) AS DONE
+            FROM CATEGORY C LEFT JOIN TASKS T ON C.ID = T.CATEGORY_ID AND T.IS_DELETED = FALSE AND T.IS_DONE = TRUE
+            GROUP BY C.ID
+            ) D ON C.ID = D.ID JOIN
+            (
+            SELECT C.ID, COUNT(T.ID) AS ALL
+            FROM CATEGORY C LEFT JOIN TASKS T ON C.ID = T.CATEGORY_ID
+            AND T.IS_DELETED = FALSE
+            GROUP BY C.ID
+            ) A ON C.ID = A.ID
+        WHERE C.USER_ID = #{userId} AND C.IS_DELETED = false
+        <if test="keyWord != null">
+            AND LOWER(C.TITLE) LIKE '%' || #{keyWord} || '%'
+        </if>
+        <if test="state == 'DONE'">
+            AND A.ALL = D.DONE AND A.ALL > 0
+        </if>
+        <if test="state == 'NDONE'">
+            AND (D.DONE &lt; A.ALL OR A.ALL = 0)
+        </if>
+    </select>
+
     <select id="getCategories" resultMap="CategoryMapper">
         SELECT C.ID, C.TITLE, C.CREATED_AT, C.UPDATED_AT, C.USER_ID, D.DONE, A.ALL
         FROM CATEGORY C JOIN
@@ -29,6 +55,15 @@
                  GROUP BY C.ID
              ) A ON C.ID = A.ID
         WHERE C.USER_ID = #{userId} AND C.IS_DELETED = false
+        <if test="keyWord != null">
+            AND LOWER(C.TITLE) LIKE '%' || #{keyWord} || '%'
+        </if>
+        <if test="state == 'DONE'">
+            AND A.ALL = D.DONE AND A.ALL > 0
+        </if>
+        <if test="state == 'NDONE'">
+            AND (D.DONE &lt; A.ALL OR A.ALL = 0)
+        </if>
         ORDER BY C.CREATED_AT DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
@@ -69,10 +104,4 @@
             select LASTVAL()
         </selectKey>
     </insert>
-
-    <select id="count" resultType="long">
-        SELECT COUNT(C.id)
-        FROM CATEGORY C
-        WHERE C.USER_ID = #{userId} AND C.IS_DELETED = false
-    </select>
 </mapper>

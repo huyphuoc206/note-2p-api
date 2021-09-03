@@ -8,7 +8,9 @@ import java.util.List;
 @Mapper
 public interface TaskMapper {
     Task findById(Long id);
+
     int update(Task task);
+
     void save(Task task);
 
     List<Task> findByCategoryId(Long id);

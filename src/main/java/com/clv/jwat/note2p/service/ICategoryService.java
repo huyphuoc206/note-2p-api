@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ICategoryService {
 
-    List<Category> getCategories(Long userId, int page, int limit);
+    List<Category> getCategories(Long userId, int page, int limit, String state, String keyWord);
 
     Category insert(Category category);
 
@@ -17,5 +17,5 @@ public interface ICategoryService {
 
     Category getCategory(Long id);
 
-    long count(Long userId);
+    long count(Long userId, String state, String keyWord);
 }
