@@ -32,8 +32,8 @@
     </update>
 
     <insert id="save" parameterType="Task">
-        INSERT INTO TASKS (name, is_done, is_deleted, created_at, category_id)
-        VALUES (#{name}, #{isDone}, #{isDeleted}, #{createdAt}, #{categoryId});
+        INSERT INTO TASKS (name, is_done, is_deleted, created_at, updated_at, category_id)
+        VALUES (#{name}, #{isDone}, #{isDeleted}, #{createdAt}, #{updatedAt} ,#{categoryId});
         <selectKey resultType="Long" keyProperty="id" order="AFTER">
             SELECT LASTVAL()
         </selectKey>

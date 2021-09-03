@@ -29,6 +29,7 @@ public class TaskService implements ITaskService {
         task.setDone(false);
         task.setDeleted(false);
         task.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        task.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         taskMapper.save(task);
         if (task.getId() == null) return null;
         category.setUpdatedAt(new Timestamp(System.currentTimeMillis()));

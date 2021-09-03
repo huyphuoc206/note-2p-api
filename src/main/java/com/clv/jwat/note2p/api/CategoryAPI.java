@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @Slf4j
@@ -19,10 +20,13 @@ public class CategoryAPI {
     private final ICategoryService categoryService;
 
     @GetMapping("/users/{userId}/categories")
-    public ResponseEntity<CategoryResponse> getCategories(@PathVariable("userId") Long userId, @RequestParam(value = "page", defaultValue = "1") int page,
-                                                        @RequestParam(value = "limit", defaultValue = "100") int limit) {
-        List<Category> categories = categoryService.getCategories(userId, page, limit);
-        long records = categoryService.count(userId);
+    public ResponseEntity<CategoryResponse> getCategories(@PathVariable("userId") Long userId,
+                                                          @RequestParam(value = "page", defaultValue = "1") int page,
+                                                          @RequestParam(value = "limit", defaultValue = "10") int limit,
+                                                          @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                                          @RequestParam(value = "search", required = false) String keyWord) {
+        List<Category> categories = categoryService.getCategories(userId, page, limit, state, keyWord);
+        long records = categoryService.count(userId, state, keyWord);
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setCategories(categories);
         categoryResponse.setRecords(records);
