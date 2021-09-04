@@ -1,5 +1,6 @@
 package com.clv.jwat.note2p.api;
 
+import com.clv.jwat.note2p.api.request.LoginRequest;
 import com.clv.jwat.note2p.api.response.ErrorResponse;
 import com.clv.jwat.note2p.entity.AppUser;
 import com.clv.jwat.note2p.jwt.JWTProvider;
@@ -26,9 +27,18 @@ public class UserAPI {
 
     private final IUserService userService;
 
-    @GetMapping("/demo")
-    public String demo() {
-        return "s";
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        log.info("{} login", loginRequest.getEmail());
+        AppUser appUser = userService.checkLogin(loginRequest.getEmail(), loginRequest.getPassword());
+        if (appUser == null) {
+            log.error("{} login fail", loginRequest.getEmail());
+            ErrorResponse errorResponse = new ErrorResponse("Incorrect email or password", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.badRequest().body(errorResponse);
+        } else {
+            log.info("{} login success", loginRequest.getEmail());
+            return ResponseEntity.ok(getAuthenticated(appUser, response));
+        }
     }
 
     @GetMapping("/token/refresh")
@@ -66,15 +76,7 @@ public class UserAPI {
             return ResponseEntity.badRequest().body(errorResponse);
         } else {
             log.info("User register success");
-            String accessToken = JWTProvider.getAccessToken(appUser);
-            String refreshToken = JWTProvider.getRefreshToken(appUser);
-            Map<String, String> map = Collections.singletonMap("access_token", accessToken);
-            Cookie cookie = new Cookie("refresh_token", refreshToken);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/api/token/refresh");
-            cookie.setMaxAge(Calendar.HOUR * 24 * 7);
-            response.addCookie(cookie);
-            return ResponseEntity.ok(map);
+            return ResponseEntity.ok(getAuthenticated(appUser, response));
         }
     }
 
@@ -86,5 +88,17 @@ public class UserAPI {
         cookie.setPath("/api/token/refresh");
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
+    }
+
+    private Map<String, String> getAuthenticated(AppUser appUser, HttpServletResponse response) {
+        String accessToken = JWTProvider.getAccessToken(appUser);
+        String refreshToken = JWTProvider.getRefreshToken(appUser);
+        Map<String, String> map = Collections.singletonMap("access_token", accessToken);
+        Cookie cookie = new Cookie("refresh_token", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/api/token/refresh");
+        cookie.setMaxAge(Calendar.HOUR * 24 * 7);
+        response.addCookie(cookie);
+        return map;
     }
 }

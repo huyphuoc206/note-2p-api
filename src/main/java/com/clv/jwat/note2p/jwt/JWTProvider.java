@@ -44,11 +44,7 @@ public class JWTProvider {
         try {
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(token);
-            String userId = decodedJWT.getSubject();
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            return userId;
+            return decodedJWT.getSubject();
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
