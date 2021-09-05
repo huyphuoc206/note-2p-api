@@ -23,6 +23,7 @@
         SELECT *
         FROM TASKS
         WHERE CATEGORY_ID = #{id} AND IS_DELETED = FALSE
+        ORDER BY CREATED_AT DESC
     </select>
 
     <update id="update" parameterType="Task">
