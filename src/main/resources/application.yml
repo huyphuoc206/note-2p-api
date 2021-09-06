@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-44-198-24-0.compute-1.amazonaws.com/d6bhlle9epftch
-    username: ehfrsnzornrmuj
-    password: af345013e93dbd9873a396d6712c7e16c8707e077f83569e79e0b363c1a6d9f3
+    url: ${DATABASE_URL:}
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
 mybatis:
   mapper-locations: classpath:/mybatis/*.xml
   config-location: classpath:/mybatis-config.xml
